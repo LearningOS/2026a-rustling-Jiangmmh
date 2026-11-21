@@ -7,8 +7,8 @@
 
 
 fn main() {
-    let a = [0; 1000];
-
+    let a = [0; 1000];  // 一个vector
+    
     if a.len() >= 100 {
         println!("Wow, that's a big array!");
     } else {
