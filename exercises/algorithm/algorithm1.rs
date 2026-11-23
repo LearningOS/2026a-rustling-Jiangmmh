@@ -2,7 +2,6 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -22,6 +21,7 @@ impl<T> Node<T> {
         }
     }
 }
+
 #[derive(Debug)]
 struct LinkedList<T> {
     length: u32,
@@ -69,14 +69,59 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+}
+
+
+impl<T:Ord> LinkedList<T> {
+    pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
 	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+        let total_len = list_a.length + list_b.length;
+        let mut head: Option<NonNull<Node<T>>> = None;
+        let mut tail: Option<NonNull<Node<T>>> = None;
+
+        let mut cur_a = list_a.start;
+        let mut cur_b = list_b.start;
+
+        // 辅助函数：将某个节点摘下来并追加到新链表尾部
+        let mut push_node = |node_ptr: NonNull<Node<T>>| unsafe {
+            (*node_ptr.as_ptr()).next = None;
+            match tail {
+                None => {
+                    head = Some(node_ptr);
+                    tail = Some(node_ptr);
+                }
+                Some(mut tail_ptr) => {
+                    (*tail_ptr.as_ptr()).next = Some(node_ptr);
+                    tail = Some(node_ptr);
+                }
+            }
+        };
+
+        while let (Some(ptr_a), Some(ptr_b)) = (cur_a, cur_b) {
+            unsafe {
+                if (*ptr_a.as_ptr()).val <= (*ptr_b.as_ptr()).val {
+                    cur_a = (*ptr_a.as_ptr()).next;
+                    push_node(ptr_a);
+                } else {
+                    cur_b = (*ptr_b.as_ptr()).next;
+                    push_node(ptr_b);
+                }
+            }
         }
+
+        let mut rem = cur_a.or(cur_b);
+        while let Some(ptr) = rem {
+            unsafe {
+                rem = (*ptr.as_ptr()).next;
+                push_node(ptr);
+            }
+        }
+
+        LinkedList {
+            length: total_len,
+            start: head,
+            end: tail,
+        }   
 	}
 }
 

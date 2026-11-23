@@ -3,11 +3,46 @@
 	This problem requires you to implement a sorting algorithm
 	you can use bubble sorting, insertion sorting, heap sorting, etc.
 */
-// I AM NOT DONE
 
-fn sort<T>(array: &mut [T]){
-	//TODO
+fn quick_sort<T: std::cmp::PartialOrd + Copy>(array: &mut [T], left: isize, right: isize) {
+    if left >= right {
+        return ;
+    }
+    
+    // index必须为usize
+    let pivot = array[(left + (right - left) / 2) as usize];
+    let mut i = left - 1;
+    let mut j = right + 1;
+    
+    loop {
+        loop {
+            i += 1;
+            if array[i as usize] >= pivot {
+                break;
+            }
+        }
+        loop {
+            j -= 1;
+            if array[j as usize] <= pivot {
+                break;
+            }
+        }
+        if i >= j {
+            break;
+        }
+
+        // swap的参数为usize类型
+        array.swap(i as usize, j as usize);
+    }
+
+    quick_sort(array, left, j);
+    quick_sort(array, j+1, right);
 }
+
+fn sort<T: std::cmp::PartialOrd + std::marker::Copy>(array: &mut [T]){
+	quick_sort(array, 0, (array.len()-1) as isize);
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

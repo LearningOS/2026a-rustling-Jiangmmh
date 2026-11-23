@@ -3,15 +3,13 @@
 	This problem requires you to implement a basic interface for a binary tree
 */
 
-//I AM NOT DONE
 use std::cmp::Ordering;
 use std::fmt::Debug;
-
 
 #[derive(Debug)]
 struct TreeNode<T>
 where
-    T: Ord,
+    T: Ord,  // TreeNode必须实现 std::cmp::Ord trait
 {
     value: T,
     left: Option<Box<TreeNode<T>>>,
@@ -51,12 +49,42 @@ where
     // Insert a value into the BST
     fn insert(&mut self, value: T) {
         //TODO
+        let mut cur = &mut self.root;  // 可变借用
+        while let Some(node) = cur {
+            match value.cmp(&node.value) {
+                std::cmp::Ordering::Less => {
+                    cur = &mut node.left;
+                }
+                std::cmp::Ordering::Greater => {
+                    cur = &mut node.right;
+                }
+                std::cmp::Ordering::Equal => {
+                    // 重复
+                    return ;
+                }
+            }
+        }
+        *cur = Some(Box::new(TreeNode::new(value)));
     }
-
+    
     // Search for a value in the BST
     fn search(&self, value: T) -> bool {
         //TODO
-        true
+        let mut cur = &self.root;
+        while let Some(node) = cur {
+            match value.cmp(&node.value) {
+                std::cmp::Ordering::Less => {
+                    cur = &node.left;
+                }
+                std::cmp::Ordering::Greater => {
+                    cur = &node.right;
+                }
+                std::cmp::Ordering::Equal => {
+                    return true;
+                }
+            }
+        }
+        false
     }
 }
 

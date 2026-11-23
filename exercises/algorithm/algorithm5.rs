@@ -3,13 +3,14 @@
 	This problem requires you to implement a basic BFS algorithm
 */
 
-//I AM NOT DONE
 use std::collections::VecDeque;
 
 // Define a graph
 struct Graph {
-    adj: Vec<Vec<usize>>, 
+    adj: Vec<Vec<usize>>,  // 邻接矩阵表示无向图
 }
+
+
 
 impl Graph {
     // Create a new graph with n vertices
@@ -27,14 +28,37 @@ impl Graph {
 
     // Perform a breadth-first search on the graph, return the order of visited nodes
     fn bfs_with_return(&self, start: usize) -> Vec<usize> {
-        
 		//TODO
-
+        // 实现思路：
+        //  1. 使用一个队列存储当前节点的全部相邻节点
+        //  2. 使用一个数组visited存储一个节点是否被访问过
+        //  3. 
+        let n = self.adj.len();
         let mut visit_order = vec![];
+        if start >= n {
+            return visit_order;
+        }
+
+        let mut visited = vec![false; n];
+        let mut queue = VecDeque::new();
+
+        visited[start] = true;
+        visit_order.push(start);
+        queue.push_back(start);
+
+        while let Some(node) = queue.pop_front() {
+            for &next in &self.adj[node] {
+                if !visited[next] {
+                    visited[next] = true;
+                    visit_order.push(next);
+                    queue.push_back(next);
+                }
+            }
+        }
+
         visit_order
     }
 }
-
 
 #[cfg(test)]
 mod tests {
